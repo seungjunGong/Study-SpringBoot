@@ -1,5 +1,5 @@
 ## SpringBoot 기초 학습 페이지
-spring 부트 학습시 노션에서 정리한 것을 기록합니다.
+spring 부트 학습시 노션에서 정리한 것을 기록합니다. 
 
 # Spring
 
@@ -105,11 +105,21 @@ External Libarries → spring-boot-autoconfigure → META_INF, autoconfigure
 
 ## 스프링 부트 계층
 
+작업 구성
+
+DTO 작성 → 서비스(내부로직) 작성 → 컨트롤러(호출로직) 작성 → 테스트 코드 작성
+
 ### 프레젠테이션 계층
 
 HTTP 요청을 받고 비즈니스 계층으로 전송하는 역할
 
 컨트롤러가 담당 - 데이터 받아오는 클래스
+
+메소드 정리
+
+@GetMapping, @PostMapping, @PutMapping
+
+- @DeleteMapping
 
 ### 비즈니스 계층
 
@@ -117,11 +127,13 @@ HTTP 요청을 받고 비즈니스 계층으로 전송하는 역할
 
 데이터 처리에 대한 로직을 여기서 작성한다.
 
+DTO(Data Transfer Object) 데이터를 교환하기 위해 사용하는 개체를 작성
+
 서비스가 담당 - 로직 클레스
 
 ### 퍼시스턴스 계층
 
-데이터 베이스 관련 로직 처리, DAO 객체를 사용한다.
+데이터 베이스 관련 로직 처리, DAO 데이터 저장 하는 객체를 사용한다.
 
 리포지토리가 담당 - 데이터 저장 클래스, DB 연동 레포지토리 인터페이스 사용
 
@@ -203,6 +215,13 @@ assertThat(a + b).isEqualTo(sum); // 훨씬 가독성이 좋다.
 
 MockMvc를 생성하고 자동으로 구성하는 애너테이션
 
+- MockMvc 란?
+
+  실제 객체와 비슷하지만 테스트에 필요한 기능만 가지는 가짜 객체를 만들어서 애플리케이션 서버에 배포하지 않고도 스프링 MVC 동작을 재현할 수 있는 클래스
+
+  [SpringBoot의 MockMvc를 사용하여 GET, POST 응답 테스트하기](https://shinsunyoung.tistory.com/52)
+
+
 ## given-when-then 패턴
 
 given: 테스트 실행 준비
@@ -222,6 +241,12 @@ then : 테스트 결과 검증
 H2 : 자바로 작성 되어 있는 RDBMS. 스프링 부트가 지원하는 인메모리 관계형 데이터 베이스
 
 테스트 용도로 주로 사용한다.
+
+애너테이션
+
+`@Transactional` 메서드를 하나의 트랜잭션으로 묶는 역할을 하는 애너테이션
+
+update 문 작성시 일관성을 유지하기 위해 사용
 
 ## JPA(Java Persistence API)
 
@@ -305,11 +330,100 @@ ORM 프레임워크로 JPA를 구현하여 사용한다.
 
 JpaRepository<Member, Long>, <엔티티이름, 엔티티기본타입>을 인터페이스에 상속 받아 사용
 
+- JpaRepository는 CrudRepository를 상속받는데 해당 클래스를 `save()` 를 호출하면
+
+  데이터베이스에 엔티티를 저장한다.
+
+
 ---
 
-## Java 학습
+# Java 학습
 
 애너테이션 : 자바 소스 코드에 추가하는 표식, JDK 1.5 버전 부터 사용 가능, 메타 데이터의 목적으로 사용
+
+롬복: 반복 메소드 작성 코드를 줄여주는 라이브러리
+
+여러가지 애너테이션으로 getter, setter, toString 등 메소드를 자동으로 만들어준다.
+
+코드를 반복해 입력할 필요가 없어 가독성이 향상된다.
+
+- 빌더 패턴: 필드에 어떤값이 들어가는지 한눈에 알 수 있다.
+    - 코드
+
+        ```java
+            @Builder // 빌더 패턴으로 객체 생성(롬복에서 지원)
+            public Article(String title, String content){
+                this.title = title;
+                this.content = content;
+            }
+            /*
+            빌더 패턴
+            Article.builder()
+                .title("abc")
+                .content("def")
+                .build();
+             */
+        ```
+
+- `Getter` 애너테이션
+  자동으로 getter 코드를 작성해준다.
+- `@NoArgsConstructor` 애너테이션
+
+  기본 생성자를 자동으로 반영해준다.
+  `@NoArgsConstructor(access = AccessLevel.*PROTECTED*)`
+
+  == `protected Article(){ // 기본 생성자}`
+
+- `@RequiredArgsConstructor`
+
+  final 혹은 @NotNull이 붙은 생성자를 만들어줌.
+
+
+# REST API
+
+REST(REpresentational State Transfer) API
+
+자원을 이름으로 구분해 자원의 상태를 주고 받는 API 방식
+
+URL의 설계 방식을 말한다.
+
+**특징**
+
+서버/클라이언트 구조, 무상태, 캐시 처리 기능, 계층화, 인터페이스 일관성
+
+**장점**
+
+URL 만 보고도 무슨 행동을 하는 API 인지 명확하게 알 수 있다.
+
+HTTP 표준을 사용하는 모든 플랫폼에서 사용 가능하다.
+
+**단점**
+
+GET, POST 방식의 제한이 있고, 설계시 공식적으로 제공되는 표준 규약이 없다.
+
+- 사용방법(규칙)
+    1. URL에 동사를 쓰지 말고, 자원을 표시한다.
+       `./get-student?student_id=1` (x)
+    2. 동사는 HTTP 메서드로 표현한다.
+       HTTP 메소드 CRUD
+       `POST` : 만들기
+       `GET` : 읽기
+       `PUT` : 업데이트
+       `DELETE` : 삭제
+- 응답 코드
+
+  200 OK : 요청이 성공적으로 수행
+
+  201 Created : 요청 성공적으로 수행, 새로운 리소스 생성
+
+  400 Bad Request : 잘못된 요청
+
+  403 Forbidden : 권한이 없음
+
+  404 Not Found : 요청값으로 찾은 리소스가 없어 요청 실패
+
+  500 Internal Server Error : 서버상 문제
+
 
 # 용어 정리
 
@@ -333,5 +447,9 @@ DAO : 데이터 베이스 계층과 상호작용하기 위한 객체
 단위 테스트 : 작은 단위(메소드 단위)로 코드를 검증하는 것
 
 JDBC(Java DataBase Connectivity): 자바에서 데이터 베이스를 종류와 관계없이 접속할 수 있게 하는 api 규격
+
+직렬화, 역직렬화: 객체 데이터를 (csv, json) 포맷으로 만드는 것을 직렬화 반대로 (csv, json) 형태에서 객체로 변환하는 것을 역직렬화라고 함.
+
+트랜잭션 : 데이터베이스의 질의 연산을 묶은 작업의 단위
 
 [스프링 입문 정리](https://www.notion.so/d7c6467ee2104727ab704c5fc06e13f9?pvs=21)
