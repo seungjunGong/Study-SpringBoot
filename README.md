@@ -115,11 +115,11 @@ HTTP 요청을 받고 비즈니스 계층으로 전송하는 역할
 
 컨트롤러가 담당 - 데이터 받아오는 클래스
 
+반환하는 값의 이름을 가진 뷰 파일을 찾음.
+
 메소드 정리
 
-@GetMapping, @PostMapping, @PutMapping
-
-- @DeleteMapping
+@GetMapping, @PostMapping, @PutMapping, @DeleteMapping
 
 ### 비즈니스 계층
 
@@ -129,7 +129,7 @@ HTTP 요청을 받고 비즈니스 계층으로 전송하는 역할
 
 DTO(Data Transfer Object) 데이터를 교환하기 위해 사용하는 개체를 작성
 
-서비스가 담당 - 로직 클레스
+서비스가 담당 - 로직 클래스
 
 ### 퍼시스턴스 계층
 
@@ -351,7 +351,7 @@ JpaRepository<Member, Long>, <엔티티이름, 엔티티기본타입>을 인터�
     - 코드
 
         ```java
-            @Builder // 빌더 패턴으로 객체 생성(롬복에서 지원)
+        @Builder // 빌더 패턴으로 객체 생성(롬복에서 지원)
             public Article(String title, String content){
                 this.title = title;
                 this.content = content;
@@ -410,6 +410,12 @@ GET, POST 방식의 제한이 있고, 설계시 공식적으로 제공되는 표
        `GET` : 읽기
        `PUT` : 업데이트
        `DELETE` : 삭제
+- http url
+
+  쿼리 파라미터: URL 끝에 ? 로 시작하는 키 값으로 이루어진 문자열 & 로 구분
+
+  예시 : `/article?id=123`
+
 - 응답 코드
 
   200 OK : 요청이 성공적으로 수행
@@ -451,5 +457,15 @@ JDBC(Java DataBase Connectivity): 자바에서 데이터 베이스를 종류와 
 직렬화, 역직렬화: 객체 데이터를 (csv, json) 포맷으로 만드는 것을 직렬화 반대로 (csv, json) 형태에서 객체로 변환하는 것을 역직렬화라고 함.
 
 트랜잭션 : 데이터베이스의 질의 연산을 묶은 작업의 단위
+
+템플릿 엔진: HTML 상에 데이터를 넣어 보여주는 도구
+
+타임 리프: 스프링 서버 템플릿 엔진
+
+# 오류 관련
+
+뷰 리졸버와 타임리프 관련 오류
+
+[Spring: Circular view path에러](https://lahezy.tistory.com/104)
 
 [스프링 입문 정리](https://www.notion.so/d7c6467ee2104727ab704c5fc06e13f9?pvs=21)
